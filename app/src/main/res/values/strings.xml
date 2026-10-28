@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PureShield 24/7</string>
+    <string name="accessibility_service_description">PureShield 24/7 Live Activity Sentinel continuously monitors search queries and browser text inputs across your phone to immediately detect adult keywords (e.g. xxx, sex, explicit terms) and instantly lock down the screen to protect your privacy and wellness.</string>
+</resources>

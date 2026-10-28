@@ -1,0 +1,6 @@
+{
+  "name": "PureShield 24/7",
+  "description": "Active 24/7 adult content blocking guide, privacy shield, safe habits streak tracker, and digital wellness guardian.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
