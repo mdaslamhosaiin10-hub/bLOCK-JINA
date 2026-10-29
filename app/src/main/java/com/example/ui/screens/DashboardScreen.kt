@@ -248,6 +248,7 @@ fun DashboardScreen(
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 putExtra(com.example.LockoutActivity.EXTRA_TRIGGER, "xxx / sex (Test Trigger)")
                                 putExtra(com.example.LockoutActivity.EXTRA_QUERY, "test search xxx")
+                                putExtra(com.example.LockoutActivity.EXTRA_IS_TEST, true)
                             }
                             context.startActivity(lockoutIntent)
                         },

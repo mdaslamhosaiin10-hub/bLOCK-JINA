@@ -280,6 +280,7 @@ fun ModestyShieldScreen(
                                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     putExtra(LockoutActivity.EXTRA_TRIGGER, "Tampering / Uninstall Attempt (Demo)")
                                     putExtra(LockoutActivity.EXTRA_IS_TAMPER, true)
+                                    putExtra(LockoutActivity.EXTRA_IS_TEST, true)
                                 }
                                 context.startActivity(lockoutIntent)
                             },

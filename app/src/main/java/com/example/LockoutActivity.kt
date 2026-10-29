@@ -91,7 +91,8 @@ class LockoutActivity : ComponentActivity() {
         val triggerWord = intent.getStringExtra(EXTRA_TRIGGER) ?: "Explicit Content"
         val queryText = intent.getStringExtra(EXTRA_QUERY) ?: ""
         val isTamper = intent.getBooleanExtra(EXTRA_IS_TAMPER, false)
-        val initialDuration = if (isTamper) 300 else 60 // 5 minutes (300s) for tamper attempt
+        val isTest = intent.getBooleanExtra(EXTRA_IS_TEST, false)
+        val initialDuration = if (isTest) 10 else if (isTamper) 300 else 60
 
         val db = PureShieldDatabase.getDatabase(this)
         val repository = ShieldRepository(db.shieldDao(), this)
@@ -102,6 +103,7 @@ class LockoutActivity : ComponentActivity() {
                     trigger = triggerWord,
                     query = queryText,
                     isTamper = isTamper,
+                    isTest = isTest,
                     totalSeconds = initialDuration,
                     onUnlockSuccess = { finish() },
                     repository = repository
@@ -114,6 +116,7 @@ class LockoutActivity : ComponentActivity() {
         const val EXTRA_TRIGGER = "EXTRA_TRIGGER"
         const val EXTRA_QUERY = "EXTRA_QUERY"
         const val EXTRA_IS_TAMPER = "EXTRA_IS_TAMPER"
+        const val EXTRA_IS_TEST = "EXTRA_IS_TEST"
     }
 }
 
@@ -122,13 +125,14 @@ fun LockoutScreen(
     trigger: String,
     query: String,
     isTamper: Boolean,
+    isTest: Boolean = false,
     totalSeconds: Int,
     onUnlockSuccess: () -> Unit,
     repository: ShieldRepository
 ) {
     // Intercept back button completely during high security lockdown
-    BackHandler(enabled = true) {
-        // Locked
+    BackHandler(enabled = !isTest) {
+        // Locked during real emergency
     }
 
     var countdownSeconds by remember { mutableIntStateOf(totalSeconds) }
@@ -276,6 +280,20 @@ fun LockoutScreen(
                         textAlign = TextAlign.Center,
                         lineHeight = 16.sp
                     )
+
+                    if (isTest) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Button(
+                            onClick = onUnlockSuccess,
+                            colors = ButtonDefaults.buttonColors(containerColor = ShieldGreenPrimary),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("end_test_lockout_button")
+                        ) {
+                            Text("Exit Demo Test", color = Color.Black, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 } else {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,

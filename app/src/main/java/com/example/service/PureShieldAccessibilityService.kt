@@ -44,6 +44,14 @@ class PureShieldAccessibilityService : AccessibilityService() {
         val now = System.currentTimeMillis()
         if (now - lastTriggerTime < 2000L) return
 
+        val packageName = event.packageName?.toString() ?: ""
+        val myPkg = applicationContext.packageName
+
+        // CRITICAL FIX: Skip events originating from PureShield itself so our own UI text, test chips, and logs never trigger self-lockout!
+        if (packageName == myPkg) {
+            return
+        }
+
         val textCandidates = mutableListOf<String>()
 
         event.text?.forEach { charSeq ->
@@ -58,13 +66,16 @@ class PureShieldAccessibilityService : AccessibilityService() {
 
         val source = event.source
         if (source != null) {
+            val sourcePkg = source.packageName?.toString() ?: ""
+            if (sourcePkg == myPkg) {
+                source.recycle()
+                return
+            }
             extractTextFromNode(source, textCandidates)
             source.recycle()
         }
 
         val joinedScreenText = textCandidates.joinToString(" ").lowercase(Locale.ROOT)
-
-        val packageName = event.packageName?.toString()
 
         // 1. Check Anti-Tampering (Block Uninstall, DNS change, Accessibility off, Admin deactivate)
         val bypassReason = ContentSafetyEngine.detectSystemBypass(joinedScreenText, packageName)
