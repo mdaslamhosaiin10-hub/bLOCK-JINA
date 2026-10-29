@@ -247,6 +247,53 @@ class ShieldViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun getExportConfigString(): String {
+        val state = shieldState.value
+        val filters = customFilters.value.map { it.pattern }
+        val streakDays = ((System.currentTimeMillis() - state.streakStartTimestamp) / 86400000L).toInt().coerceAtLeast(1)
+
+        return """
+            ===========================================
+            🛡️ PURESHIELD 24/7 ANDROID SECURITY PROFILE
+            ===========================================
+            Exported: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())}
+            
+            [SYSTEM PROTECTION STATUS]
+            - Protection Status: ${if (state.isActive) "ACTIVE 24/7" else "PAUSED"}
+            - Protection Level: ${state.protectionLevel.title}
+            - Strict Mode Locked: ${state.isStrictModeLocked}
+            - Clean Streak Days: $streakDays Days
+            - Intercepted Threats: ${state.totalInterceptedCount}
+            
+            [NETWORK & DNS SECURITY]
+            - System-Wide Private DNS: ${state.dnsActiveType}
+            - Private DNS Hostname: family-filter-dns.cleanbrowsing.org
+            - Status: ${if (state.isDnsConfigured) "CONFIGURED & ACTIVE" else "PENDING SETUP"}
+            
+            [JINA KILLER & MORAL SECURITY]
+            - Zina / Adult Keyword Interceptor: ACTIVE
+            - Romance & Kissing Filter: ACTIVE
+            - Figure / Curvy Attire Guard: ACTIVE
+            - Vulgar Dance & Music Interceptor: ACTIVE
+            - Sex Story & Erotica Blocker: ACTIVE
+            - Visual Modesty Blur Guard: ACTIVE
+            
+            [4-TIER ANTI-BYPASS FORTRESS]
+            - 1. Block App Uninstall: Device Admin + Sentinel Armed
+            - 2. Block DNS Tampering: Settings Locked (5-Min Freeze)
+            - 3. Block Accessibility Off: Intercepted (5-Min Freeze)
+            - 4. Block Phone Admin Off: Intercepted (5-Min Freeze)
+            
+            [CUSTOM ACTIVE BLACKLIST (${filters.size})]
+            ${filters.joinToString("\n") { "  * $it" }}
+            
+            ===========================================
+            Install PureShield APK on your Android phone via AI Studio's
+            Export menu (Download APK).
+            ===========================================
+        """.trimIndent()
+    }
+
     private fun emitMessage(msg: String) {
         viewModelScope.launch {
             _userMessage.emit(msg)

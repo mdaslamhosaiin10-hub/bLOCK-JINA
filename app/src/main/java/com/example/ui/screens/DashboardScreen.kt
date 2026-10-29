@@ -27,10 +27,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SelfImprovement
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.Button
@@ -318,6 +320,68 @@ fun DashboardScreen(
                     tint = CyberCyanLight,
                     modifier = Modifier.size(18.dp)
                 )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        // Download APK for Android Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .testTag("download_apk_card"),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF131D36)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, CyberCyanSecondary)
+        ) {
+            Column(modifier = Modifier.padding(14.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Download,
+                        contentDescription = null,
+                        tint = CyberCyanLight,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Download APK for Your Android Phone",
+                        fontSize = 14.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Install PureShield on your real phone: Open AI Studio's top menu (Export icon in top right) -> Select 'Export' -> 'Download APK'. Transfer or open on Android to install.",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 16.sp
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        val exportString = viewModel.getExportConfigString()
+                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, "PureShield_Security_Profile.txt")
+                            putExtra(Intent.EXTRA_TEXT, exportString)
+                        }
+                        context.startActivity(Intent.createChooser(sendIntent, "Download / Export PureShield Profile"))
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberCyanSecondary),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("export_config_file_button")
+                ) {
+                    Icon(Icons.Filled.Share, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Export & Download Security Config File", fontSize = 12.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
             }
         }
 
